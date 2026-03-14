@@ -14,7 +14,13 @@ class GoalManager {
         void toggleGoal(int index);
         const std::vector<Goal>& getGoals() const;
         std::vector<Goal> getGoalsByYear(int year) const;
-    };
+
+        int countGoals(int year) const;
+        int countCompletedGoals(int year) const;
+        float completionRate(int year) const;
+
+};
+
 
 
 #endif //GOALKEEPER_GOALMANAGER_H

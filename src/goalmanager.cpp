@@ -32,3 +32,38 @@ std::vector<Goal> GoalManager::getGoalsByYear(int year) const {
     }
     return filteredGoals;
 }
+// src/goalmanager.cpp (neu ergänzt)
+int GoalManager::countGoals(int year) const {
+    int count = 0;
+
+    for (const auto& g : goals) {
+        if (g.year == year) {
+            ++count;
+        }
+    }
+
+    return count;
+}
+
+int GoalManager::countCompletedGoals(int year) const {
+    int count = 0;
+
+    for (const auto& g : goals) {
+        if (g.year == year && g.done) {
+            ++count;
+        }
+    }
+
+    return count;
+}
+
+float GoalManager::completionRate(int year) const {
+    const int totalGoals = countGoals(year);
+
+    if (totalGoals == 0) {
+        return 0.0f;
+    }
+
+    const int completedGoals = countCompletedGoals(year);
+    return static_cast<float>(completedGoals) / static_cast<float>(totalGoals);
+}

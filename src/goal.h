@@ -5,6 +5,7 @@
 //using namespace std;
 
 struct Goal {
+    int id;
     int year;       //Jahr
     std::string text;    //Zieltext
     bool done;      //Checkbox

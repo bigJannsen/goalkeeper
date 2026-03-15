@@ -6,21 +6,20 @@
 #include "goal.h"
 
 class GoalManager {
-    private:
-        std::vector<Goal> goals;
+private:
+    std::vector<Goal> goals;
+    int nextId = 1;
 
-    public:
-        void addGoal(int year, const std::string& text);
-        void toggleGoal(int index);
-        const std::vector<Goal>& getGoals() const;
-        std::vector<Goal> getGoalsByYear(int year) const;
+public:
+    void addGoal(int year, const std::string& text);
+    void toggleGoal(int index);
+    void toggleGoalById(int id);
+    const std::vector<Goal>& getGoals() const;
+    std::vector<Goal> getGoalsByYear(int year) const;
 
-        int countGoals(int year) const;
-        int countCompletedGoals(int year) const;
-        float completionRate(int year) const;
-
+    int countGoals(int year) const;
+    int countCompletedGoals(int year) const;
+    float completionRate(int year) const;
 };
-
-
 
 #endif //GOALKEEPER_GOALMANAGER_H

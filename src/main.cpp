@@ -13,7 +13,7 @@ int main() {
     manager.addGoal(2027, "C++ GUI App bauen");
     manager.addGoal(2027, "Mehr Sport machen");
 
-    manager.toggleGoal(1);
+    manager.toggleGoalById(2);
 
     vector<Goal> goals2026 = manager.getGoalsByYear(2026);
 
@@ -21,6 +21,7 @@ int main() {
     cout << "----------------------" << endl;
 
     for (const auto& g : goals2026) {
+        cout << "ID: " << g.id << endl;
         cout << "Jahr: " << g.year << endl;
         cout << "Ziel: " << g.text << endl;
         cout << "Erledigt: " << g.done << endl;
@@ -29,15 +30,3 @@ int main() {
 
     return 0;
 }
-
-
-/*
- *  GUI hinzufügen
- *  Statistiken:
- *  Wie viele Ziele?
- *  Wie viele abgeschlossen?
- *  Prozentwerte / Diagramme usw.
- *
- *  Evtl. bei Geld Summen angeben und summieren
- *
- */

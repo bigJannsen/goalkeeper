@@ -19,117 +19,368 @@ export component AppWindow inherits Window {
     callback add-goal(string);
     callback year-changed(int);
 
-    width: 700px;
-    height: 520px;
+    width: 760px;
+    height: 560px;
     title: "Goalkeeper";
+    background: #0c1018;
 
-    VerticalBox {
-        padding: 12px;
-        spacing: 10px;
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        background: #0c1018;
 
         HorizontalBox {
-            spacing: 8px;
+            width: parent.width;
+            height: parent.height;
+            spacing: 14px;
+            padding: 14px;
 
-            Button {
-                text: "Goals";
-                clicked => { root.show-goals-page = true; }
-            }
+            Rectangle {
+                width: 170px;
+                background: #141b28;
+                border-radius: 12px;
+                border-width: 1px;
+                border-color: #222c40;
 
-            Button {
-                text: "Statistics";
-                clicked => { root.show-goals-page = false; }
-            }
-        }
+                VerticalBox {
+                    x: 14px;
+                    y: 14px;
+                    width: parent.width - 28px;
+                    height: parent.height - 28px;
+                    spacing: 10px;
 
-        if (root.show-goals-page) : VerticalBox {
-            spacing: 8px;
-
-            HorizontalBox {
-                spacing: 8px;
-
-                Button {
-                    text: "< Jahr";
-                    clicked => {
-                        root.year-changed(root.current-year - 1);
+                    Text {
+                        text: "GOALKEEPER";
+                        color: #7f8ea8;
+                        font-size: 11px;
+                        font-weight: 700;
                     }
-                }
 
-                Text {
-                    text: "Jahr: \{root.current-year}";
-                    vertical-alignment: center;
-                }
-
-                Button {
-                    text: "Jahr >";
-                    clicked => {
-                        root.year-changed(root.current-year + 1);
+                    Text {
+                        text: "Jahr \{root.current-year}";
+                        color: #dce6ff;
+                        font-size: 20px;
+                        font-weight: 700;
                     }
-                }
-            }
 
-            HorizontalBox {
-                spacing: 8px;
+                    Rectangle {
+                        height: 1px;
+                        background: #26314a;
+                    }
 
-                goal-input := LineEdit {
-                    placeholder-text: "Neues Ziel eingeben";
-                }
+                    Rectangle {
+                        height: 44px;
+                        background: root.show-goals-page ? #3f67ff : #1a2234;
+                        border-radius: 10px;
 
-                Button {
-                    text: "Ziel hinzufuegen";
-                    clicked => {
-                        if (goal-input.text != "") {
-                            root.add-goal(goal-input.text);
-                            goal-input.text = "";
+                        Button {
+                            width: parent.width;
+                            height: parent.height;
+                            text: "Goals";
+                            clicked => { root.show-goals-page = true; }
                         }
+                    }
+
+                    Rectangle {
+                        height: 44px;
+                        background: root.show-goals-page ? #1a2234 : #3f67ff;
+                        border-radius: 10px;
+
+                        Button {
+                            width: parent.width;
+                            height: parent.height;
+                            text: "Statistics";
+                            clicked => { root.show-goals-page = false; }
+                        }
+                    }
+
+                    Rectangle {
+                        vertical-stretch: 1;
+                        background: #00000000;
                     }
                 }
             }
 
             Rectangle {
+                vertical-stretch: 1;
+                background: #111827;
+                border-radius: 12px;
                 border-width: 1px;
-                border-color: #d0d0d0;
-                border-radius: 6px;
-                min-height: 320px;
+                border-color: #222c40;
 
-                ListView {
+                if (root.show-goals-page) : Rectangle {
                     width: parent.width;
                     height: parent.height;
+                    background: #00000000;
 
-                    for goal-row in root.goal-items : Rectangle {
-                        min-height: 54px;
-                        border-width: 0px 0px 1px 0px;
-                        border-color: #e7e7e7;
+                    VerticalBox {
+                        x: 18px;
+                        y: 18px;
+                        width: parent.width - 36px;
+                        height: parent.height - 36px;
+                        spacing: 14px;
 
                         Text {
-                            x: 8px;
-                            y: 10px;
-                            text: "ID: \{goal-row.id}";
+                            text: "Goals Dashboard";
+                            color: #f2f5ff;
+                            font-size: 24px;
+                            font-weight: 700;
+                        }
+
+                        HorizontalBox {
+                            spacing: 8px;
+
+                            Button {
+                                width: 94px;
+                                text: "< Jahr";
+                                clicked => {
+                                    root.year-changed(root.current-year - 1);
+                                }
+                            }
+
+                            Rectangle {
+                                background: #1a2234;
+                                border-radius: 8px;
+                                border-width: 1px;
+                                border-color: #283550;
+                                min-width: 150px;
+                                min-height: 36px;
+
+                                Text {
+                                    x: 12px;
+                                    y: 9px;
+                                    text: "Aktives Jahr: \{root.current-year}";
+                                    color: #dce6ff;
+                                }
+                            }
+
+                            Button {
+                                width: 94px;
+                                text: "Jahr >";
+                                clicked => {
+                                    root.year-changed(root.current-year + 1);
+                                }
+                            }
+                        }
+
+                        HorizontalBox {
+                            spacing: 8px;
+
+                            goal-input := LineEdit {
+                                placeholder-text: "Neues Ziel eingeben";
+                            }
+
+                            Button {
+                                width: 160px;
+                                text: "Ziel hinzufuegen";
+                                clicked => {
+                                    if (goal-input.text != "") {
+                                        root.add-goal(goal-input.text);
+                                        goal-input.text = "";
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            vertical-stretch: 1;
+                            background: #0f1625;
+                            border-radius: 10px;
+                            border-width: 1px;
+                            border-color: #273550;
+
+                            ListView {
+                                width: parent.width;
+                                height: parent.height;
+
+                                for goal-row in root.goal-items : Rectangle {
+                                    height: 90px;
+                                    background: #00000000;
+
+                                    Rectangle {
+                                        x: 10px;
+                                        y: 6px;
+                                        width: parent.width - 20px;
+                                        height: parent.height - 12px;
+                                        background: #182238;
+                                        border-radius: 10px;
+                                        border-width: 1px;
+                                        border-color: #2a3a59;
+
+                                        Text {
+                                            x: 12px;
+                                            y: 10px;
+                                            text: "ID: \{goal-row.id}";
+                                            color: #91a3c6;
+                                            font-size: 12px;
+                                        }
+
+                                        Text {
+                                            x: 12px;
+                                            y: 32px;
+                                            width: parent.width - 160px;
+                                            text: "\{goal-row.text}";
+                                            color: #ecf2ff;
+                                            font-size: 15px;
+                                        }
+
+                                        Rectangle {
+                                            x: parent.width - 112px;
+                                            y: 24px;
+                                            width: 96px;
+                                            height: 30px;
+                                            background: goal-row.done ? #1f7a4b : #7c2e3f;
+                                            border-radius: 15px;
+
+                                            Text {
+                                                x: (parent.width - self.preferred-width) / 2;
+                                                y: 6px;
+                                                text: goal-row.done ? "Erledigt" : "Offen";
+                                                color: #f6f9ff;
+                                                font-size: 13px;
+                                                font-weight: 600;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!root.show-goals-page) : Rectangle {
+                    width: parent.width;
+                    height: parent.height;
+                    background: #00000000;
+
+                    VerticalBox {
+                        x: 18px;
+                        y: 18px;
+                        width: parent.width - 36px;
+                        height: parent.height - 36px;
+                        spacing: 12px;
+
+                        Text {
+                            text: "Statistics";
+                            color: #f2f5ff;
+                            font-size: 24px;
+                            font-weight: 700;
                         }
 
                         Text {
-                            x: 8px;
-                            y: 28px;
-                            text: "Ziel: \{goal-row.text}";
+                            text: "Uebersicht fuer Jahr \{root.current-year}";
+                            color: #9aa8c1;
+                            font-size: 14px;
                         }
 
-                        Text {
-                            x: parent.width - self.preferred-width - 8px;
-                            y: 18px;
-                            text: goal-row.done ? "Erledigt" : "Offen";
-                            color: goal-row.done ? #0f8a3f : #8a0f0f;
+                        HorizontalBox {
+                            spacing: 10px;
+
+                            Rectangle {
+                                vertical-stretch: 1;
+                                min-height: 110px;
+                                background: #17233a;
+                                border-radius: 10px;
+                                border-width: 1px;
+                                border-color: #273957;
+
+                                Text {
+                                    x: 12px;
+                                    y: 14px;
+                                    text: "Ziele insgesamt";
+                                    color: #9fb0cf;
+                                    font-size: 13px;
+                                }
+
+                                Text {
+                                    x: 12px;
+                                    y: 42px;
+                                    text: "\{root.total-goals}";
+                                    color: #f3f6ff;
+                                    font-size: 34px;
+                                    font-weight: 700;
+                                }
+                            }
+
+                            Rectangle {
+                                vertical-stretch: 1;
+                                min-height: 110px;
+                                background: #17233a;
+                                border-radius: 10px;
+                                border-width: 1px;
+                                border-color: #273957;
+
+                                Text {
+                                    x: 12px;
+                                    y: 14px;
+                                    text: "Erledigt";
+                                    color: #9fb0cf;
+                                    font-size: 13px;
+                                }
+
+                                Text {
+                                    x: 12px;
+                                    y: 42px;
+                                    text: "\{root.completed-goals}";
+                                    color: #78d39f;
+                                    font-size: 34px;
+                                    font-weight: 700;
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            min-height: 130px;
+                            background: #17233a;
+                            border-radius: 10px;
+                            border-width: 1px;
+                            border-color: #273957;
+
+                            Text {
+                                x: 12px;
+                                y: 14px;
+                                text: "Fortschritt";
+                                color: #9fb0cf;
+                                font-size: 13px;
+                            }
+
+                            Text {
+                                x: 12px;
+                                y: 40px;
+                                text: "\{(root.completion-rate * 100)}% abgeschlossen";
+                                color: #f3f6ff;
+                                font-size: 22px;
+                                font-weight: 700;
+                            }
+
+                            Rectangle {
+                                x: 12px;
+                                y: 84px;
+                                width: parent.width - 24px;
+                                height: 20px;
+                                background: #0f1625;
+                                border-radius: 10px;
+                                border-width: 1px;
+                                border-color: #293959;
+
+                                Rectangle {
+                                    x: 2px;
+                                    y: 2px;
+                                    width: (parent.width - 4px) * root.completion-rate;
+                                    height: parent.height - 4px;
+                                    background: #4f6dff;
+                                    border-radius: 8px;
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            vertical-stretch: 1;
+                            background: #00000000;
                         }
                     }
                 }
             }
-        }
-
-        if (!root.show-goals-page) : VerticalBox {
-            spacing: 8px;
-
-            Text { text: "Statistiken fuer Jahr \{root.current-year}"; }
-            Text { text: "Ziele insgesamt: \{root.total-goals}"; }
-            Text { text: "Erledigt: \{root.completed-goals}"; }
-            Text { text: "Quote: \{(root.completion-rate * 100)}%"; }
         }
     }
 }

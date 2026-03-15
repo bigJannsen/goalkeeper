@@ -1,0 +1,135 @@
+import { Button, HorizontalBox, LineEdit, VerticalBox } from "std-widgets.slint";
+
+export struct GoalRow {
+    id: int,
+    text: string,
+    done: bool,
+}
+
+export component AppWindow inherits Window {
+    in-out property <int> current-year: 2026;
+    in property <[GoalRow]> goal-items;
+
+    in property <int> total-goals: 0;
+    in property <int> completed-goals: 0;
+    in property <float> completion-rate: 0;
+
+    in-out property <bool> show-goals-page: true;
+
+    callback add-goal(string);
+    callback year-changed(int);
+
+    width: 700px;
+    height: 520px;
+    title: "Goalkeeper";
+
+    VerticalBox {
+        padding: 12px;
+        spacing: 10px;
+
+        HorizontalBox {
+            spacing: 8px;
+
+            Button {
+                text: "Goals";
+                clicked => { root.show-goals-page = true; }
+            }
+
+            Button {
+                text: "Statistics";
+                clicked => { root.show-goals-page = false; }
+            }
+        }
+
+        if (root.show-goals-page) : VerticalBox {
+            spacing: 8px;
+
+            HorizontalBox {
+                spacing: 8px;
+
+                Button {
+                    text: "< Jahr";
+                    clicked => {
+                        root.year-changed(root.current-year - 1);
+                    }
+                }
+
+                Text {
+                    text: "Jahr: \{root.current-year}";
+                    vertical-alignment: center;
+                }
+
+                Button {
+                    text: "Jahr >";
+                    clicked => {
+                        root.year-changed(root.current-year + 1);
+                    }
+                }
+            }
+
+            HorizontalBox {
+                spacing: 8px;
+
+                goal-input := LineEdit {
+                    placeholder-text: "Neues Ziel eingeben";
+                }
+
+                Button {
+                    text: "Ziel hinzufuegen";
+                    clicked => {
+                        if (goal-input.text != "") {
+                            root.add-goal(goal-input.text);
+                            goal-input.text = "";
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                border-width: 1px;
+                border-color: #d0d0d0;
+                border-radius: 6px;
+                min-height: 320px;
+
+                ListView {
+                    width: parent.width;
+                    height: parent.height;
+
+                    for goal-row in root.goal-items : Rectangle {
+                        min-height: 54px;
+                        border-width: 0px 0px 1px 0px;
+                        border-color: #e7e7e7;
+
+                        Text {
+                            x: 8px;
+                            y: 10px;
+                            text: "ID: \{goal-row.id}";
+                        }
+
+                        Text {
+                            x: 8px;
+                            y: 28px;
+                            text: "Ziel: \{goal-row.text}";
+                        }
+
+                        Text {
+                            x: parent.width - self.preferred-width - 8px;
+                            y: 18px;
+                            text: goal-row.done ? "Erledigt" : "Offen";
+                            color: goal-row.done ? #0f8a3f : #8a0f0f;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!root.show-goals-page) : VerticalBox {
+            spacing: 8px;
+
+            Text { text: "Statistiken fuer Jahr \{root.current-year}"; }
+            Text { text: "Ziele insgesamt: \{root.total-goals}"; }
+            Text { text: "Erledigt: \{root.completed-goals}"; }
+            Text { text: "Quote: \{(root.completion-rate * 100)}%"; }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-import { Button, HorizontalBox, LineEdit, VerticalBox } from "std-widgets.slint";
+import { Button, HorizontalBox, LineEdit, ListView, VerticalBox } from "std-widgets.slint";
 
 export struct GoalRow {
     id: int,
@@ -19,8 +19,11 @@ export component AppWindow inherits Window {
     callback add-goal(string);
     callback year-changed(int);
 
-    width: 760px;
-    height: 560px;
+    default-font-family: "Arial";
+    default-font-size: 14px;
+
+    min-width: 760px;
+    min-height: 560px;
     title: "Goalkeeper";
     background: #0c1018;
 
@@ -28,6 +31,7 @@ export component AppWindow inherits Window {
         width: parent.width;
         height: parent.height;
         background: #0c1018;
+        //clip: true;
 
         HorizontalBox {
             width: parent.width;
@@ -41,6 +45,7 @@ export component AppWindow inherits Window {
                 border-radius: 12px;
                 border-width: 1px;
                 border-color: #222c40;
+                //clip: false;
 
                 VerticalBox {
                     x: 14px;

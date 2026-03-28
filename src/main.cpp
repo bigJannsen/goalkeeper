@@ -1,10 +1,24 @@
 #include <cmath>
 #include <memory>
 
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#include <slint.h>
 #include "app-window.h"
 #include "goalmanager.h"
 
 int main() {
+/*
+        slint::platform::set_window_scale_factor(1.0f); // optional override
+        auto app = AppWindow::create();
+        app->run();
+
+        SetProcessDPIAware();
+        auto app = AppWindow::create();
+        app->run;
+*/
+
     GoalManager manager;
 
     manager.addGoal(2022, "10 Buecher lesen");

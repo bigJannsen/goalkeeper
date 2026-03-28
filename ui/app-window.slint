@@ -1,23 +1,49 @@
 import { Button, HorizontalBox, LineEdit, ListView, VerticalBox } from "std-widgets.slint";
 
 export struct GoalRow {
-    id: int,
-    text: string,
-    done: bool,
-}
+           id: int,
+           title: string,
+           details: string,
+           done: bool,
+           status_text: string,
+       }
 
 export component AppWindow inherits Window {
-    in-out property <int> current-year: 2026;
-    in property <[GoalRow]> goal-items;
 
-    in property <int> total-goals: 0;
-    in property <int> completed-goals: 0;
-    in property <float> completion-rate: 0;
+    in-out property <int> current-year: 2026;            // aktives Jahr
+    in property <[GoalRow]> goal-items;                  // Liste aus C++
 
-    in-out property <bool> show-goals-page: true;
+    in property <int> total-goals: 0;                    // Statistik gesamt
+    in property <int> completed-goals: 0;                // erledigt
+    in property <float> completion-rate: 0;              // Fortschritt
 
-    callback add-goal(string);
-    callback year-changed(int);
+    in-out property <bool> show-goals-page: true;        // Page toggle
+
+    in-out property <bool> show-search: false;           // Suche sichtbar
+    in-out property <string> search-text: "";            // Suchtext
+
+    in-out property <int> expanded-goal-id: -1;          // aufgeklapptes Goal
+    in-out property <int> selected-goal-id: -1;          // ausgewählt
+
+    in-out property <bool> show-create-dialog: false;    // Create Dialog
+    in-out property <bool> show-detail-dialog: false;    // Detail Dialog
+    in-out property <bool> show-delete-confirm-dialog: false; // Delete Dialog
+
+    in-out property <string> draft-title: "";            // Form Titel
+    in-out property <string> draft-details: "";          // Form Details
+    in-out property <int> draft-year: root.current-year; // Form Jahr
+
+    callback add-goal(string);                           // einfaches Add
+    callback year-changed(int);                          // Jahr wechseln
+
+    callback open-create-dialog();                       // UI → Dialog öffnen
+    callback open-detail-dialog(int);                    // Details öffnen
+    callback request-toggle-status(int);                 // Done toggle
+    callback request-delete-goal(int);                   // löschen
+    callback request-save-detail(int, string, string, int); // speichern
+    callback request-create-goal(string, string, int);   // erstellen
+
+    callback search-text-changed();                      // Suche triggern
 
     default-font-family: "Arial";
     default-font-size: 14px;
@@ -168,20 +194,114 @@ export component AppWindow inherits Window {
                             }
                         }
 
-                        HorizontalBox {
-                            spacing: 8px;
+                        Rectangle {
+                            height: 48px;
+                            background: #00000000;
 
-                            goal-input := LineEdit {
-                                placeholder-text: "Neues Ziel eingeben";
+                            // SUCHBEREICH LINKS
+                            Rectangle {
+                                x: 0;
+                                y: 6px;
+                                width: parent.width - 160px;
+                                height: 36px;
+                                background: #00000000;
+
+                                Rectangle {
+                                    x: 0;
+                                    y: 0;
+                                    width: 36px;
+                                    height: 36px;
+                                    border-radius: 8px;
+                                    background: #22304a;
+                                    border-width: 1px;
+                                    border-color: #334566;
+
+                                    TouchArea {
+                                        width: parent.width;
+                                        height: parent.height;
+                                        clicked => {
+                                            root.show-search = !root.show-search;
+                                            if (!root.show-search) {
+                                                root.search-text = "";
+                                            }
+                                        }
+                                    }
+
+                                    Text {
+                                        x: (parent.width - self.preferred-width) / 2;
+                                        y: (parent.height - self.preferred-height) / 2;
+                                        text: "🔍";
+                                        font-size: 16px;
+                                    }
+                                }
+
+                                if (root.show-search) : Rectangle {
+                                    x: 44px;
+                                    y: 0;
+                                    width: parent.width - 44px;
+                                    height: 36px;
+                                    background: #00000000;
+
+                                    search-input := LineEdit {
+                                        x: 0;
+                                        y: 0;
+                                        width: parent.width - 36px;
+                                        height: 36px;
+                                        text: root.search-text;
+                                        placeholder-text: "Ziele suchen";
+                                        edited => {
+                                            root.search-text = self.text;
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        x: parent.width - 30px;
+                                        y: 3px;
+                                        width: 30px;
+                                        height: 30px;
+                                        border-radius: 6px;
+                                        background: #7c2e3f;
+                                        border-width: 1px;
+                                        border-color: #a24459;
+
+                                        TouchArea {
+                                            width: parent.width;
+                                            height: parent.height;
+                                            clicked => {
+                                                root.show-search = false;
+                                                root.search-text = "";
+                                            }
+                                        }
+
+                                        Text {
+                                            x: (parent.width - self.preferred-width) / 2;
+                                            y: (parent.height - self.preferred-height) / 2;
+                                            text: "X";
+                                            color: #ffffff;
+                                            font-size: 14px;
+                                            font-weight: 700;
+                                        }
+                                    }
+                                }
                             }
 
-                            Button {
-                                width: 160px;
-                                text: "Ziel hinzufuegen";
-                                clicked => {
-                                    if (goal-input.text != "") {
-                                        root.add-goal(goal-input.text);
-                                        goal-input.text = "";
+                            // ERSTELLEN BUTTON RECHTS
+                            Rectangle {
+                                x: parent.width - 152px;
+                                y: 6px;
+                                width: 140px;
+                                height: 36px;
+                                background: #1f7a4b;
+                                border-radius: 8px;
+                                border-width: 1px;
+                                border-color: #2a9a61;
+
+                                Button {
+                                    width: parent.width;
+                                    height: parent.height;
+                                    text: "Erstellen";
+                                    clicked => {
+                                        root.open-create-dialog();
                                     }
                                 }
                             }
@@ -199,7 +319,8 @@ export component AppWindow inherits Window {
                                 height: parent.height;
 
                                 for goal-row in root.goal-items : Rectangle {
-                                    height: 90px;
+                                    height: root.expanded-goal-id == goal-row.id ? 220px : 118px;
+
                                     background: #00000000;
 
                                     Rectangle {
@@ -223,27 +344,107 @@ export component AppWindow inherits Window {
                                         Text {
                                             x: 12px;
                                             y: 32px;
-                                            width: parent.width - 160px;
-                                            text: "\{goal-row.text}";
+                                            width: parent.width - 190px;
+                                            text: goal-row.title;
                                             color: #ecf2ff;
                                             font-size: 15px;
+                                            font-weight: 600;
                                         }
 
                                         Rectangle {
                                             x: parent.width - 112px;
-                                            y: 24px;
+                                            y: (parent.height - 30px) / 2;
                                             width: 96px;
                                             height: 30px;
                                             background: goal-row.done ? #1f7a4b : #7c2e3f;
                                             border-radius: 15px;
 
+                                            TouchArea {
+                                                width: parent.width;
+                                                height: parent.height;
+                                                clicked => {
+                                                    root.request-toggle-status(goal-row.id);
+                                                }
+                                            }
+
                                             Text {
                                                 x: (parent.width - self.preferred-width) / 2;
-                                                y: 6px;
-                                                text: goal-row.done ? "Erledigt" : "Offen";
+                                                y: (parent.height - self.preferred-height) / 2 - 1px;
+                                                text: goal-row.status_text;
                                                 color: #f6f9ff;
                                                 font-size: 13px;
                                                 font-weight: 600;
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            x: parent.width - 152px;
+                                            y: (parent.height - 30px) / 2;
+                                            width: 30px;
+                                            height: 30px;
+                                            background: #22304a;
+                                            border-radius: 8px;
+                                            border-width: 1px;
+                                            border-color: #334566;
+
+                                            TouchArea {
+                                                width: parent.width;
+                                                height: parent.height;
+                                                clicked => {
+                                                    root.selected-goal-id = goal-row.id;
+                                                    root.draft-title = goal-row.title;
+                                                    root.draft-details = goal-row.details;
+                                                    root.draft-year = root.current-year;
+                                                    root.open-detail-dialog(goal-row.id);
+                                                }
+                                            }
+
+                                            Text {
+                                                x: (parent.width - self.preferred-width) / 2;
+                                                y: (parent.height - self.preferred-height) / 2 + 2px;
+                                                text: "✎";
+                                                color: #dce6ff;
+                                                font-size: 14px;
+                                            }
+                                        }
+
+                                        if (root.expanded-goal-id == goal-row.id) : Text {
+                                            x: 12px;
+                                            y: 58px;
+                                            width: parent.width - 24px;
+                                            text: goal-row.details == "" ? "Keine Details hinterlegt" : goal-row.details;
+                                            color: #9fb0cf;
+                                            font-size: 12px;
+                                        }
+
+                                        Rectangle {
+                                            x: (parent.width - 36px) / 2;
+                                            y: parent.height - 26px;
+                                            width: 36px;
+                                            height: 18px;
+                                            background: #22304a;
+                                            border-radius: 9px;
+                                            border-width: 1px;
+                                            border-color: #334566;
+
+                                            TouchArea {
+                                                width: parent.width;
+                                                height: parent.height;
+                                                clicked => {
+                                                    if (root.expanded-goal-id == goal-row.id) {
+                                                        root.expanded-goal-id = -1;
+                                                    } else {
+                                                        root.expanded-goal-id = goal-row.id;
+                                                    }
+                                                }
+                                            }
+
+                                            Text {
+                                                x: (parent.width - self.preferred-width) / 2;
+                                                y: parent.height - 18px;
+                                                text: root.expanded-goal-id == goal-row.id ? "^" : "v";
+                                                color: #dce6ff;
+                                                font-size: 14px;
                                             }
                                         }
                                     }

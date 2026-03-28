@@ -2,13 +2,13 @@
 #define GOALKEEPER_GOAL_H
 
 #include <string>
-//using namespace std;
 
 struct Goal {
     int id;
-    int year;       //Jahr
-    std::string text;    //Zieltext
-    bool done;      //Checkbox
+    int year;
+    std::string title;
+    std::string details;
+    bool done;
 };
 
 #endif //GOALKEEPER_GOAL_H
